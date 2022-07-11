@@ -1,0 +1,576 @@
+"""Exposes a URL that specifies the behaviour of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behaviour of this scalar."""
+  url: String!
+) on SCALAR
+
+type _Metadata {
+  lastProcessedHeight: Int
+  lastProcessedTimestamp: Date
+  targetHeight: Int
+  chain: String
+  specName: String
+  genesisHash: String
+  indexerHealthy: Boolean
+  indexerNodeVersion: String
+  queryNodeVersion: String
+  rowCountEstimate: [TableEstimate]
+  dynamicDatasources: String
+}
+
+"""
+A floating point number that requires more precision than IEEE 754 binary 64
+"""
+scalar BigFloat
+
+"""
+A filter to be used against BigFloat fields. All fields are combined with a logical ‘and.’
+"""
+input BigFloatFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: BigFloat
+
+  """Not equal to the specified value."""
+  notEqualTo: BigFloat
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: BigFloat
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: BigFloat
+
+  """Included in the specified list."""
+  in: [BigFloat!]
+
+  """Not included in the specified list."""
+  notIn: [BigFloat!]
+
+  """Less than the specified value."""
+  lessThan: BigFloat
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: BigFloat
+
+  """Greater than the specified value."""
+  greaterThan: BigFloat
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: BigFloat
+}
+
+"""A location in a connection that can be used for resuming pagination."""
+scalar Cursor
+
+"""The day, does not include a time."""
+scalar Date
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+"""
+A filter to be used against JSON fields. All fields are combined with a logical ‘and.’
+"""
+input JSONFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: JSON
+
+  """Not equal to the specified value."""
+  notEqualTo: JSON
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: JSON
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: JSON
+
+  """Included in the specified list."""
+  in: [JSON!]
+
+  """Not included in the specified list."""
+  notIn: [JSON!]
+
+  """Less than the specified value."""
+  lessThan: JSON
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: JSON
+
+  """Greater than the specified value."""
+  greaterThan: JSON
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: JSON
+
+  """Contains the specified JSON."""
+  contains: JSON
+
+  """Contains the specified key."""
+  containsKey: String
+
+  """Contains all of the specified keys."""
+  containsAllKeys: [String!]
+
+  """Contains any of the specified keys."""
+  containsAnyKeys: [String!]
+
+  """Contained by the specified JSON."""
+  containedBy: JSON
+}
+
+"""An object with a globally unique `ID`."""
+interface Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+}
+
+"""The root query type which gives access points into the data universe."""
+type Query implements Node {
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+
+  """
+  The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`.
+  """
+  nodeId: ID!
+
+  """Fetches an object given its globally unique `ID`."""
+  node(
+    """The globally unique `ID`."""
+    nodeId: ID!
+  ): Node
+
+  """Reads and enables pagination through a set of `XCMTransfer`."""
+  xCMTransfers(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `XCMTransfer`."""
+    orderBy: [XcmTransfersOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: XCMTransferFilter
+  ): XcmTransfersConnection
+  xCMTransfer(id: String!): XCMTransfer
+
+  """Reads a single `XCMTransfer` using its globally unique `ID`."""
+  xCMTransferByNodeId(
+    """
+    The globally unique `ID` to be used in selecting a single `XCMTransfer`.
+    """
+    nodeId: ID!
+  ): XCMTransfer
+  _metadata: _Metadata
+}
+
+"""
+A filter to be used against String fields. All fields are combined with a logical ‘and.’
+"""
+input StringFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: String
+
+  """Not equal to the specified value."""
+  notEqualTo: String
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: String
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: String
+
+  """Included in the specified list."""
+  in: [String!]
+
+  """Not included in the specified list."""
+  notIn: [String!]
+
+  """Less than the specified value."""
+  lessThan: String
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: String
+
+  """Greater than the specified value."""
+  greaterThan: String
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: String
+
+  """Contains the specified string (case-sensitive)."""
+  includes: String
+
+  """Does not contain the specified string (case-sensitive)."""
+  notIncludes: String
+
+  """Contains the specified string (case-insensitive)."""
+  includesInsensitive: String
+
+  """Does not contain the specified string (case-insensitive)."""
+  notIncludesInsensitive: String
+
+  """Starts with the specified string (case-sensitive)."""
+  startsWith: String
+
+  """Does not start with the specified string (case-sensitive)."""
+  notStartsWith: String
+
+  """Starts with the specified string (case-insensitive)."""
+  startsWithInsensitive: String
+
+  """Does not start with the specified string (case-insensitive)."""
+  notStartsWithInsensitive: String
+
+  """Ends with the specified string (case-sensitive)."""
+  endsWith: String
+
+  """Does not end with the specified string (case-sensitive)."""
+  notEndsWith: String
+
+  """Ends with the specified string (case-insensitive)."""
+  endsWithInsensitive: String
+
+  """Does not end with the specified string (case-insensitive)."""
+  notEndsWithInsensitive: String
+
+  """
+  Matches the specified pattern (case-sensitive). An underscore (_) matches any
+  single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  like: String
+
+  """
+  Does not match the specified pattern (case-sensitive). An underscore (_)
+  matches any single character; a percent sign (%) matches any sequence of zero
+  or more characters.
+  """
+  notLike: String
+
+  """
+  Matches the specified pattern (case-insensitive). An underscore (_) matches
+  any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  likeInsensitive: String
+
+  """
+  Does not match the specified pattern (case-insensitive). An underscore (_)
+  matches any single character; a percent sign (%) matches any sequence of zero
+  or more characters.
+  """
+  notLikeInsensitive: String
+
+  """Equal to the specified value (case-insensitive)."""
+  equalToInsensitive: String
+
+  """Not equal to the specified value (case-insensitive)."""
+  notEqualToInsensitive: String
+
+  """
+  Not equal to the specified value, treating null like an ordinary value (case-insensitive).
+  """
+  distinctFromInsensitive: String
+
+  """
+  Equal to the specified value, treating null like an ordinary value (case-insensitive).
+  """
+  notDistinctFromInsensitive: String
+
+  """Included in the specified list (case-insensitive)."""
+  inInsensitive: [String!]
+
+  """Not included in the specified list (case-insensitive)."""
+  notInInsensitive: [String!]
+
+  """Less than the specified value (case-insensitive)."""
+  lessThanInsensitive: String
+
+  """Less than or equal to the specified value (case-insensitive)."""
+  lessThanOrEqualToInsensitive: String
+
+  """Greater than the specified value (case-insensitive)."""
+  greaterThanInsensitive: String
+
+  """Greater than or equal to the specified value (case-insensitive)."""
+  greaterThanOrEqualToInsensitive: String
+}
+
+type TableEstimate {
+  table: String
+  estimate: Int
+}
+
+type XCMTransfer implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: String!
+  blockNumber: BigFloat
+  timestamp: String
+  fromAddress: String
+  fromAddressSS58: String
+  fromParachainId: String
+  toAddress: String!
+  toAddressSS58: String
+  toParachainId: String!
+  assetParachainId: String
+  assetId: JSON!
+  amount: JSON!
+  assetIdTransferred: JSON
+  amountTransferred: JSON
+  xcmpMessageHash: String
+  xcmpMessageStatus: String
+  xcmpTransferStatus: JSON
+  xcmpInstructions: JSON
+  warnings: String!
+}
+
+type XCMTransferAggregates {
+  keys: [String!]
+}
+
+"""
+A filter to be used against `XCMTransfer` object types. All fields are combined with a logical ‘and.’
+"""
+input XCMTransferFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `blockNumber` field."""
+  blockNumber: BigFloatFilter
+
+  """Filter by the object’s `timestamp` field."""
+  timestamp: StringFilter
+
+  """Filter by the object’s `fromAddress` field."""
+  fromAddress: StringFilter
+
+  """Filter by the object’s `fromAddressSS58` field."""
+  fromAddressSS58: StringFilter
+
+  """Filter by the object’s `fromParachainId` field."""
+  fromParachainId: StringFilter
+
+  """Filter by the object’s `toAddress` field."""
+  toAddress: StringFilter
+
+  """Filter by the object’s `toAddressSS58` field."""
+  toAddressSS58: StringFilter
+
+  """Filter by the object’s `toParachainId` field."""
+  toParachainId: StringFilter
+
+  """Filter by the object’s `assetParachainId` field."""
+  assetParachainId: StringFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: JSONFilter
+
+  """Filter by the object’s `amount` field."""
+  amount: JSONFilter
+
+  """Filter by the object’s `assetIdTransferred` field."""
+  assetIdTransferred: JSONFilter
+
+  """Filter by the object’s `amountTransferred` field."""
+  amountTransferred: JSONFilter
+
+  """Filter by the object’s `xcmpMessageHash` field."""
+  xcmpMessageHash: StringFilter
+
+  """Filter by the object’s `xcmpMessageStatus` field."""
+  xcmpMessageStatus: StringFilter
+
+  """Filter by the object’s `xcmpTransferStatus` field."""
+  xcmpTransferStatus: JSONFilter
+
+  """Filter by the object’s `xcmpInstructions` field."""
+  xcmpInstructions: JSONFilter
+
+  """Filter by the object’s `warnings` field."""
+  warnings: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [XCMTransferFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [XCMTransferFilter!]
+
+  """Negates the expression."""
+  not: XCMTransferFilter
+}
+
+"""A connection to a list of `XCMTransfer` values."""
+type XcmTransfersConnection {
+  """A list of `XCMTransfer` objects."""
+  nodes: [XCMTransfer]!
+
+  """
+  A list of edges which contains the `XCMTransfer` and cursor to aid in pagination.
+  """
+  edges: [XcmTransfersEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `XCMTransfer` you could get from the connection."""
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: XCMTransferAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """The method to use when grouping `XCMTransfer` for these aggregates."""
+    groupBy: [XCMTransfersGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: XCMTransfersHavingInput
+  ): [XCMTransferAggregates!]
+}
+
+"""A `XCMTransfer` edge in the connection."""
+type XcmTransfersEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `XCMTransfer` at the end of the edge."""
+  node: XCMTransfer
+}
+
+"""Grouping methods for `XCMTransfer` for usage during aggregation."""
+enum XCMTransfersGroupBy {
+  BLOCK_NUMBER
+  TIMESTAMP
+  FROM_ADDRESS
+  FROM_ADDRESS_S_S58
+  FROM_PARACHAIN_ID
+  TO_ADDRESS
+  TO_ADDRESS_S_S58
+  TO_PARACHAIN_ID
+  ASSET_PARACHAIN_ID
+  ASSET_ID
+  AMOUNT
+  ASSET_ID_TRANSFERRED
+  AMOUNT_TRANSFERRED
+  XCMP_MESSAGE_HASH
+  XCMP_MESSAGE_STATUS
+  XCMP_TRANSFER_STATUS
+  XCMP_INSTRUCTIONS
+  WARNINGS
+}
+
+"""Conditions for `XCMTransfer` aggregates."""
+input XCMTransfersHavingInput {
+  AND: [XCMTransfersHavingInput!]
+  OR: [XCMTransfersHavingInput!]
+}
+
+"""Methods to use when ordering `XCMTransfer`."""
+enum XcmTransfersOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  BLOCK_NUMBER_ASC
+  BLOCK_NUMBER_DESC
+  TIMESTAMP_ASC
+  TIMESTAMP_DESC
+  FROM_ADDRESS_ASC
+  FROM_ADDRESS_DESC
+  FROM_ADDRESS_S_S58_ASC
+  FROM_ADDRESS_S_S58_DESC
+  FROM_PARACHAIN_ID_ASC
+  FROM_PARACHAIN_ID_DESC
+  TO_ADDRESS_ASC
+  TO_ADDRESS_DESC
+  TO_ADDRESS_S_S58_ASC
+  TO_ADDRESS_S_S58_DESC
+  TO_PARACHAIN_ID_ASC
+  TO_PARACHAIN_ID_DESC
+  ASSET_PARACHAIN_ID_ASC
+  ASSET_PARACHAIN_ID_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  AMOUNT_ASC
+  AMOUNT_DESC
+  ASSET_ID_TRANSFERRED_ASC
+  ASSET_ID_TRANSFERRED_DESC
+  AMOUNT_TRANSFERRED_ASC
+  AMOUNT_TRANSFERRED_DESC
+  XCMP_MESSAGE_HASH_ASC
+  XCMP_MESSAGE_HASH_DESC
+  XCMP_MESSAGE_STATUS_ASC
+  XCMP_MESSAGE_STATUS_DESC
+  XCMP_TRANSFER_STATUS_ASC
+  XCMP_TRANSFER_STATUS_DESC
+  XCMP_INSTRUCTIONS_ASC
+  XCMP_INSTRUCTIONS_DESC
+  WARNINGS_ASC
+  WARNINGS_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+

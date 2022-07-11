@@ -1,0 +1,40 @@
+{
+  "name": "subql-xcm-karura",
+  "version": "1.0.0",
+  "description": "index xcm on karura",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "subql build",
+    "prepack": "rm -rf dist && npm build",
+    "test": "jest",
+    "codegen": "./node_modules/.bin/subql codegen",
+    "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
+    "remove:.data": "yes | sudo rm -r .data/ && docker rm `sudo docker ps -aqf \"name=^subql-xcm-karura_postgres_1$\"`",
+    "devbuild": "cp -f ../common/instructions-from-xcmp-msg-u8array.ts ../common/parce-xcmp-instructions.ts ../common/get-ss58-address.ts ../common/parce-interior.ts ./src/common/ && subql build"
+    
+  },
+  "repository":  "https://github.com/serkul/subql-xcm-karura.git",
+  "files": [
+    "dist",
+    "schema.graphql",
+    "project.yaml"
+  ],
+  "author": "SubQuery Network",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@acala-network/type-definitions": "latest",
+    "@polkadot/api": "^8",
+    "@subql/cli": "latest",
+    "@subql/types": "latest",
+    "typescript": "^4.1.3"
+  },
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
+  },
+  "dependencies": {
+    "@subql/acala-evm-processor": "^0.0.2"
+  },
+  "resolutions": {
+    "ipfs-unixfs": "6.0.6"
+  }
+}

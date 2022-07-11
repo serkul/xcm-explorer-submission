@@ -1,0 +1,135 @@
+:root {
+  --font-mono: 0.9em Consolas, monaco, "Ubuntu Mono", "Liberation Mono", "Courier New", Courier, monospace;
+  --font-sans: 1em "-apple-system", BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-weight-bold: 700;
+  --font-weight-light: 200;
+  --font-weight-normal: 400;
+  --width-full: 1750px;
+  --width-half: 875px;
+  --bg-menu-hover: rgba(255, 255, 255, 0.2);
+  --border-input: rgba(34, 36, 38, .15);
+
+  --bg-input: #ffffff;
+  --bg-input-error: #fff6f6;
+  --bg-inverse: rgba(244, 242, 240, 0.91);
+  --bg-menu: #ffffff;
+  --bg-page: #f5f3f1;
+  --bg-table: #ffffff;
+  --bg-tabs: #ffffff;
+  --bg-toggle: #e4e5e6;
+  --bg-sidebar: #fafafa;
+  --border-table: #f1efed;
+  --border-tabs: #f1efed;
+  --color-contrast: rgba(255, 253, 251, 0.875);
+  --color-checkbox: rgba(34, 36, 38, 0.15);
+  --color-error: rgba(139, 0, 0);
+  --color-label: rgba(78, 78, 78, 0.66);
+  --color-summary: rgba(0, 0, 0, 0.6);
+  --color-table-foot: rgba(78, 78, 78, 0.66);
+  --color-table-head: rgba(78, 78, 78, 0.66);
+  --color-text: #4e4e4e;
+
+  --highlight-bg: var(--bg-menu);
+}
+
+#root {
+  background: var(--bg-page);
+  color: var(--color-text);
+  font: var(--font-sans);
+  height: 100%;
+}
+
+*, :after, :before {
+  box-sizing: inherit;
+}
+
+html {
+  height: 100%;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  min-width: 320px;
+  background: #fff;
+  font: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.4285em;
+  color: rgba(0, 0, 0, .87);
+  font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font: var(--font-sans);
+  line-height: 1.28571429em;
+  margin: calc(2rem - .14285714em) 0 1rem;
+  font-weight: 700;
+  padding: 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+h1 {
+  min-height: 1rem;
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.71428571rem;
+}
+
+h3 {
+  font-size: 1.28571429rem;
+}
+
+h4 {
+  font-size: 1.07142857rem;
+}
+
+h5 {
+  font-size: 1rem;
+}
+
+p {
+  margin: 0 0 1em;
+  line-height: 1.4285em;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+a {
+  color: currentColor;
+  text-decoration: none;
+
+  &:hover {
+    color: currentColor;
+    text-decoration: none;
+  }
+}
+
+
+::selection {
+  background-color: #cce2ff;
+  color: rgba(0, 0, 0, .87)
+}
+
+input::selection, textarea::selection {
+  background-color: rgba(100, 100, 100, .4);
+  color: rgba(0, 0, 0, .87)
+}

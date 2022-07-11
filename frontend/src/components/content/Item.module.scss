@@ -1,0 +1,118 @@
+$oneRowHeight: 3rem;
+$smallScreenRows: 5;
+$bigScreenRows: 3;
+$verticalPadding: 0.250em;
+$rowsGap: 0.125em;
+$firstRowSmallScreenHeight: calc(($oneRowHeight + $rowsGap) * $smallScreenRows - $rowsGap + $verticalPadding * 2);
+$firstRowHeight: calc(($oneRowHeight + $rowsGap) * $bigScreenRows - $rowsGap + $verticalPadding * 2);
+
+.container {
+  flex: 1 1;
+  background: var(--bg-table);
+  width: 90vw;
+  overflow-y: hidden;
+  overflow-x: auto;
+  transition: max-height 200ms ease-in-out;
+  max-height: calc(500px + $firstRowSmallScreenHeight);
+
+  &.collapsed {
+    max-height: $firstRowSmallScreenHeight;
+  }
+}
+
+.br {
+  flex-basis: 100%;
+}
+
+.smallBr {
+  flex-basis: 100%;
+}
+
+.firstRow {
+  height: $firstRowSmallScreenHeight;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: left;
+  gap: $rowsGap;
+  padding: 0.5em 1em;
+}
+
+.timeStamp {
+  flex: 0 0 16ch;
+  margin-right: auto;
+}
+
+.toDirection, .fromDirection {
+  width: 5ch;
+  text-align: right;
+  margin-right: 0.5em;
+}
+
+.toParachain, .fromParachain {
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+}
+
+.toLogo, .fromLogo, .counterpartLogo {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.toAddress, .fromAddress {
+  flex: 1;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: left;
+  > input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: currentColor;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:focus {
+
+    }
+  }
+}
+
+.copyButton {
+  background: none;
+  cursor: pointer;
+}
+
+.collapseToggle {
+  background: none;
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
+
+  .collapsed & {
+    transform: rotate(180deg);
+  }
+}
+
+.content {
+  max-height: 500px;
+  overflow: auto;
+  padding: 2em;
+}
+
+@media screen and (min-width: 850px) {
+  .container {
+    max-height: calc(500px + $firstRowSmallScreenHeight);
+    &.collapsed {
+      max-height: $firstRowHeight;
+    }
+  }
+  .firstRow {
+    height: $firstRowHeight;
+  }
+  .smallBr {
+    flex-basis: 0;
+  }
+}

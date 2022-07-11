@@ -1,0 +1,46 @@
+specVersion: 1.0.0
+name: subql-xcm-basilisk
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  
+repository: ''
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755'
+  endpoint: 'wss://basilisk.api.onfinality.io/public-ws'
+  dictionary: https://api.subquery.network/sq/subquery/basilisk-dictionary
+  chaintypes:
+    file: ./dist/chaintypes.js
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1308160
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleXcmpQueueModule
+          kind: substrate/EventHandler
+          filter:
+            module: xcmpQueue
+        - handler: handleDmpParaEvent
+          kind: substrate/EventHandler
+          filter:
+            module: dmpQueue
+            method: ExecutedDownward
+        - handler: handleUmpParaEvent #check is made inside handler to not repeat handleXcmpQueueModule
+          kind: substrate/EventHandler
+          filter:
+            module: xTokens
+            method: Transferred    
+        - handler: handleUmpParaEvent #check is made inside handler to not repeat handleXcmpQueueModule
+          kind: substrate/EventHandler
+          filter:
+            module: xTokens
+            method: TransferMultiAssets    

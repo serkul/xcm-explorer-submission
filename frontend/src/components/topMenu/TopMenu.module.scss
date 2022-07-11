@@ -1,0 +1,32 @@
+.container {
+  width: 100%;
+  padding: 0;
+  background: var(--highlight-bg);
+  color: var(--color-contrast);
+}
+
+.menuContainer {
+  width: 100%;
+  max-width: var(--width-full);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menuSection {
+  display: flex;
+  align-items: center;
+}
+
+.menuGroup {
+  flex: 1 1 0;
+  list-style: none;
+  margin: 0 1rem 0 0;
+  padding: 0;
+}
+
+.icon {
+  margin-right: 0.5rem;
+}
