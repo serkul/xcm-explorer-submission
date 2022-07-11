@@ -18,7 +18,7 @@ export function TopMenu({ className: c }: TopMenuProps) {
         </div>
         <div className={css.menuSection}>
           <a
-            href="https://github.com/grasshoppergn/polkadot-crosschain-transactions-viewer"
+            href="https://github.com/serkul/xcm-explorer-submission"
             rel="noreferrer noopener"
           >
             <FontAwesomeIcon icon={faGithub} className={css.icon} />
