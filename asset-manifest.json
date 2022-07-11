@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/polkadot-crosschain-transactions-viewer/static/css/main.d52ebf18.css",
+    "main.js": "/polkadot-crosschain-transactions-viewer/static/js/main.227b1867.js",
+    "static/media/basilisk-logo.png": "/polkadot-crosschain-transactions-viewer/static/media/basilisk-logo.bd771f5ab704587dd6c7.png",
+    "static/media/moonriver-logo.svg": "/polkadot-crosschain-transactions-viewer/static/media/moonriver-logo.0d6c0ca22e4f0531f208781460392c87.svg",
+    "static/media/spinner.png": "/polkadot-crosschain-transactions-viewer/static/media/spinner.c2f357edb17bac4da6e7.png",
+    "static/media/karura-logo.svg": "/polkadot-crosschain-transactions-viewer/static/media/karura-logo.cb78f2cd48d0a846c57211e3fbaca43e.svg",
+    "index.html": "/polkadot-crosschain-transactions-viewer/index.html",
+    "main.d52ebf18.css.map": "/polkadot-crosschain-transactions-viewer/static/css/main.d52ebf18.css.map",
+    "main.227b1867.js.map": "/polkadot-crosschain-transactions-viewer/static/js/main.227b1867.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d52ebf18.css",
+    "static/js/main.227b1867.js"
+  ]
+}
