@@ -19,7 +19,7 @@ network:
   dictionary: https://api.subquery.network/sq/subquery/kusama-dictionary
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 12035036
+    startBlock: 10000024
     mapping:
       file: ./dist/index.js
       handlers:
@@ -38,3 +38,8 @@ dataSources:
           filter:
             module: xcmPallet
             method: limitedReserveTransferAssets
+        - handler: handleDmpExtrinsic
+          kind: substrate/CallHandler
+          filter:
+            module: xcmPallet
+            method: ReserveTransferAssets    

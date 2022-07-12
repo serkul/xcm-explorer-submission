@@ -174,13 +174,9 @@ export async function handleXcmpQueueModule(
 
       switch (xcmpExtrinsicWithEvents.status) {
         case "HRMP received":
-          logger.info("received");
-
           await decodeInboundXcmp(xcmpExtrinsicWithEvents, api, transfer);
           break;
         case "HRMP sent":
-          logger.info("sent");
-
           await decodeOutboundXcmp(xcmpExtrinsicWithEvents, api, transfer);
           break;
       }
@@ -229,7 +225,6 @@ async function decodeInboundXcmp(xcmpExtrinsicWithEvents, apiAt, transfer) {
   transfer.toParachainId = (await apiAt.query.parachainInfo.parachainId())
     .toString()
     .replace(/,/g, "");
-  logger.info("above hor message");
 
   xcmpExtrinsicWithEvents.extrinsic.method.args[0].horizontalMessages.forEach(
     (paraMessage, paraId) => {
