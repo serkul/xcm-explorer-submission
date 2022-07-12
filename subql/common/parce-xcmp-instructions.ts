@@ -5,7 +5,7 @@ interface Transfer {
   assetId: string[];
   amount: string[];
   toAddress: string;
-  toParachainId: string;
+  // toParachainId: string;
 }
 export function parceXcmpInstrustions(instructions, transfer: Transfer) {
   // Check if xcmp version is 1, then parce the asset part
@@ -54,25 +54,15 @@ function parceV2V3Instruction(instructions, transfer: Transfer) {
           // can get weight limit and fee asset if needed
           break;
         case "DepositAsset":
-          let parceRes1 = parceInterior(
+          transfer.toAddress = parceInterior(
             instruction.DepositAsset.beneficiary.interior
           );
-          if (typeof parceRes1 == "string") {
-            transfer.warnings += parceRes1;
-          } else {
-            [transfer.toParachainId, transfer.toAddress] = parceRes1;
-          }
           break;
         case "DepositReserveAsset":
-          let parceRes2 = parceInterior(
+          transfer.toAddress = parceInterior(
             instruction.DepositReserveAsset.xcm[1].DepositAsset.beneficiary
               .interior
           );
-          if (typeof parceRes2 == "string") {
-            transfer.warnings += parceRes2;
-          } else {
-            [transfer.toParachainId, transfer.toAddress] = parceRes2;
-          }
           break;
         default:
           transfer.warnings += ` - Unknown instruction name ${key}`;

@@ -6,7 +6,7 @@ import { intructionsFromXcmU8Array } from "../common/instructions-from-xcmp-msg-
 import { parceXcmpInstrustions } from "../common/parce-xcmp-instructions";
 import { TextEncoder } from "@polkadot/x-textencoder";
 import { getSS58AddressForChain } from "../common/get-ss58-address";
-import { parceInterior } from "../common/parce-interior";
+import { parceInterior, chainIdFromInterior } from "../common/parce-interior";
 
 export async function handleUmpParaEvent(event: SubstrateEvent): Promise<void> {
   const xcmpMessageSentEvent: any[] = event.block.events.filter(
@@ -186,9 +186,9 @@ export async function handleXcmpQueueModule(
 }
 
 async function decodeOutboundXcmp(xcmpExtrinsicWithEvents, apiAt, transfer) {
-  transfer.fromParachainId = (
-    await apiAt.query.parachainInfo.parachainId()
-  ).toString();
+  transfer.fromParachainId = (await apiAt.query.parachainInfo.parachainId())
+    .toString()
+    .replace(/,/g, "");
   xcmpExtrinsicWithEvents.events.forEach(({ event }) => {
     if (
       event.section == "xTokens" &&
@@ -222,9 +222,10 @@ async function decodeOutboundXcmp(xcmpExtrinsicWithEvents, apiAt, transfer) {
 }
 
 async function decodeInboundXcmp(xcmpExtrinsicWithEvents, apiAt, transfer) {
-  transfer.toParachainId = (
-    await apiAt.query.parachainInfo.parachainId()
-  ).toString();
+  transfer.toParachainId = (await apiAt.query.parachainInfo.parachainId())
+    .toString()
+    .replace(/,/g, "");
+
   xcmpExtrinsicWithEvents.extrinsic.method.args[0].horizontalMessages.forEach(
     (paraMessage, paraId) => {
       if (paraMessage.length >= 1) {
@@ -233,11 +234,13 @@ async function decodeInboundXcmp(xcmpExtrinsicWithEvents, apiAt, transfer) {
             Uint8Array.from(message.data).slice(1)
           );
           if (messageHash == transfer.xcmpMessageHash) {
+            transfer.fromParachainId = paraId.toString().replace(/,/g, "");
             // Get readable instructions from byte-array xcmp message
             const instructions = intructionsFromXcmU8Array(
               message.data.slice(1),
               api
             );
+
             if (typeof instructions == "string") {
               transfer.warnings += instructions;
             } else {
@@ -253,7 +256,6 @@ async function decodeInboundXcmp(xcmpExtrinsicWithEvents, apiAt, transfer) {
               } else {
                 transfer.warnings += address;
               }
-
               // Save all instructions as an array of JSON,
               // in case detailed information is needed (or parces failed)
               transfer.xcmpInstructions = instructions.map((instruction) =>
@@ -286,12 +288,8 @@ function parcexTokenTransfer(
     transfer.amount.push(amount.toString().replace(/,/g, ""));
   }
   // Extract destination address from XcmpMultilocation
-  const parceInteriorRes = parceInterior(dest.interior);
-  if (typeof parceInteriorRes == "string") {
-    transfer.warnings += parceInteriorRes;
-  } else {
-    [transfer.toParachainId, transfer.toAddress] = parceInteriorRes;
-  }
+  transfer.toAddress = parceInterior(dest.interior);
+  transfer.toParachainId = chainIdFromInterior(dest.interior);
 }
 
 function mapXcmpEventsToExtrinsics(allBlockExtrinsics, allBlockEvents) {

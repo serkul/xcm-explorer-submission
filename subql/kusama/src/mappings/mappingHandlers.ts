@@ -41,12 +41,7 @@ export async function handleDmpExtrinsic(
   // transfer.toParachainId = dest.V1.interior.X1.Parachain.replace(/,/g, "");
   // transfer.toAddress = beneficiary.V1.interior.X1.AccountKey20.key.toString();
   // Extract destination chain ID and address from XcmpMultilocation
-  const parceInterioRes = parceInterior(dest.interior);
-  if (typeof parceInterioRes == "string") {
-    transfer.warnings += parceInterioRes;
-  } else {
-    [transfer.toParachainId, transfer.toAddress] = parceInterioRes;
-  }
+  transfer.toAddress = parceInterior(dest.interior);
   transfer.assetId = assets.V0[0].ConcreteFungible.id.toString();
   transfer.amount = assets.V0[0].ConcreteFungible.amount.replace(/,/g, "");
   transfer.xcmpMessageStatus = "DMP sent";
@@ -132,8 +127,6 @@ export async function handleUmpExtrinsic(
 
           tempTransfer.xcmpMessageHash = blake2AsHex(Uint8Array.from(message));
           tempTransfer.fromParachainId = paraId;
-          logger.info(tempTransfer.xcmpMessageHash);
-          logger.info(tempTransfer.fromParachainId);
           const instructionsHuman = intructionsFromXcmU8Array(message, api);
 
           if (typeof instructionsHuman == "string") {
@@ -143,7 +136,6 @@ export async function handleUmpExtrinsic(
               (instruction) => JSON.stringify(instruction, undefined)
             );
             parceXcmpInstrustions(instructionsHuman, tempTransfer);
-            logger.info(JSON.stringify(instructionsHuman, undefined, 0));
             // Calculate SS58 version of address
             const [ans, address] = getSS58AddressForChain(
               tempTransfer.toAddress,
@@ -151,7 +143,6 @@ export async function handleUmpExtrinsic(
             );
             if (ans) {
               tempTransfer.toAddressSS58 = address;
-              logger.info(`got address ${address}`);
             } else {
               tempTransfer.warnings += address;
             }
