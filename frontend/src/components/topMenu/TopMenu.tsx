@@ -1,8 +1,8 @@
-import classNames from "classnames";
-import css from "./TopMenu.module.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import classNames from "classnames";
 import { ChainSwitcher } from "./ChainSwitcher";
+import css from "./TopMenu.module.scss";
 
 interface TopMenuProps {
   className?: string;
@@ -17,10 +17,7 @@ export function TopMenu({ className: c }: TopMenuProps) {
           <ChainSwitcher />
         </div>
         <div className={css.menuSection}>
-          <a
-            href="https://github.com/serkul/xcm-explorer-submission"
-            rel="noreferrer noopener"
-          >
+          <a href="https://github.com/serkul/xcm-explorer-submission" rel="noreferrer noopener">
             <FontAwesomeIcon icon={faGithub} className={css.icon} />
             GitHub
           </a>

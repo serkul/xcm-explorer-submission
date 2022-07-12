@@ -49,7 +49,7 @@ export const CHAIN_INFO = {
     name: "Kusama",
     logo: kusamaLogo,
     style: css.kusamaStyle,
-    apiUrl: "https://api.subquery.network/sq/serkul/subql-xcm-kusama",
+    apiUrl: "https://api.subquery.network/sq/serkul/xcm-kusama-ipfs",
   },
   karura: {
     id: "karura",
@@ -68,7 +68,6 @@ export const CHAIN_INFO = {
         toAddress
         toAddressSS58
         toParachainId
-        assetParachainId
         assetId
         amount
         assetIdTransferred
@@ -83,7 +82,7 @@ export const CHAIN_INFO = {
     name: "Karura",
     logo: karuraLogo,
     style: css.karuraStyle,
-    apiUrl: "https://api.subquery.network/sq/serkul/subql-xcm-karura",
+    apiUrl: "https://api.subquery.network/sq/serkul/xcm-karura-ipfs",
   },
   moonriver: {
     id: "moonriver",
@@ -102,7 +101,6 @@ export const CHAIN_INFO = {
         toAddress
         toAddressSS58
         toParachainId
-        assetParachainId
         assetId
         amount
         assetIdTransferred
@@ -117,7 +115,7 @@ export const CHAIN_INFO = {
     name: "Moonriver",
     logo: moonriverLogo,
     style: css.moonriverStyle,
-    apiUrl: "https://api.subquery.network/sq/serkul/subql-xcm-moonriver",
+    apiUrl: "https://api.subquery.network/sq/serkul/xcm-moonriver-ipfs",
   },
   basilisk: {
     id: "basilisk",
@@ -150,7 +148,7 @@ export const CHAIN_INFO = {
     name: "Basilisk",
     logo: basiliskLogo,
     style: css.basiliskStyle,
-    apiUrl: "https://api.subquery.network/sq/serkul/subql-xcm-basilisk",
+    apiUrl: "https://api.subquery.network/sq/serkul/xcm-basilisk-ipfs",
   },
 } as const;
 

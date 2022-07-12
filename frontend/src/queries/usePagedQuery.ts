@@ -22,7 +22,12 @@ export function usePagedQuery<TQueryKey extends string | readonly unknown[]>(
           totalCount: number;
           nodes: Array<XcmTransfer>;
         };
-      }>(apiUrl || "", gqlQuery(fieldsSchema), queryVariables?.(pageParam)),
+      }>(apiUrl || "", gqlQuery(fieldsSchema), queryVariables?.(pageParam)).then(res => {
+        if (!pageParam) {
+          console.log("Total count in current query:", res.xCMTransfers.totalCount);
+        }
+        return res;
+      }),
     {
       getNextPageParam: ({
         xCMTransfers: {

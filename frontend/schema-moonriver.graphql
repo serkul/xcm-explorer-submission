@@ -372,7 +372,6 @@ type XCMTransfer implements Node {
   toAddress: String!
   toAddressSS58: String
   toParachainId: String!
-  assetParachainId: String
   assetId: JSON!
   amount: JSON!
   assetIdTransferred: JSON
@@ -418,9 +417,6 @@ input XCMTransferFilter {
 
   """Filter by the object’s `toParachainId` field."""
   toParachainId: StringFilter
-
-  """Filter by the object’s `assetParachainId` field."""
-  assetParachainId: StringFilter
 
   """Filter by the object’s `assetId` field."""
   assetId: JSONFilter
@@ -511,7 +507,6 @@ enum XCMTransfersGroupBy {
   TO_ADDRESS
   TO_ADDRESS_S_S58
   TO_PARACHAIN_ID
-  ASSET_PARACHAIN_ID
   ASSET_ID
   AMOUNT
   ASSET_ID_TRANSFERRED
@@ -550,8 +545,6 @@ enum XcmTransfersOrderBy {
   TO_ADDRESS_S_S58_DESC
   TO_PARACHAIN_ID_ASC
   TO_PARACHAIN_ID_DESC
-  ASSET_PARACHAIN_ID_ASC
-  ASSET_PARACHAIN_ID_DESC
   ASSET_ID_ASC
   ASSET_ID_DESC
   AMOUNT_ASC

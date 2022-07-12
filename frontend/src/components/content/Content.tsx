@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import css from "./Content.module.scss";
-import { ChangeEventHandler, useCallback, useState } from "react";
+import { ChangeEventHandler, KeyboardEventHandler, useCallback, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { useParams } from "react-router-dom";
 import { faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -22,6 +22,14 @@ export function Content({ className: c }: ContentProps) {
   const onButtonClick = useCallback(() => {
     navigate(encodeURIComponent(value));
   }, [navigate, value]);
+  const onKeyDown = useCallback<KeyboardEventHandler>(
+    e => {
+      if (e.key === "Enter") {
+        onButtonClick();
+      }
+    },
+    [onButtonClick],
+  );
   const onResetClick = useCallback(() => {
     setValue("");
     navigate("");
@@ -36,6 +44,7 @@ export function Content({ className: c }: ContentProps) {
             className={css.input}
             value={value}
             onChange={onChange}
+            onKeyDown={onKeyDown}
             placeholder={`Account ID to query on ${name}`}
           />
           <IconButton
