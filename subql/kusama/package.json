@@ -14,7 +14,7 @@
 
 
   },
-  "repository": "https://github.com/serkul/subql-xcm-kusama.git",
+  "repository": "",
   "files": [
     "dist",
     "schema.graphql",

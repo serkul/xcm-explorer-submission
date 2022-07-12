@@ -13,14 +13,14 @@
     "devbuild": "cp -f ../common/instructions-from-xcmp-msg-u8array.ts ../common/parce-xcmp-instructions.ts ../common/get-ss58-address.ts ../common/parce-interior.ts ./src/common/ && cp -f ../moonriver/src/mappings/mappingHandlers.ts ./src/mappings/ && subql build"
     
   },
-  "repository":  "https://github.com/serkul/subql-xcm-karura.git",
+  "repository":  "",
   "files": [
     "dist",
     "schema.graphql",
     "project.yaml"
   ],
-  "author": "SubQuery Network",
-  "license": "Apache-2.0",
+  "author": "serkul",
+  "license": "MIT",
   "devDependencies": {
     "@acala-network/type-definitions": "latest",
     "@polkadot/api": "^8",

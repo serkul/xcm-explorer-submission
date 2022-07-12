@@ -1,7 +1,6 @@
-import { SubstrateExtrinsic, SubstrateEvent } from "@subql/types";
+import { SubstrateEvent } from "@subql/types";
 import { XCMTransfer } from "../types";
-import { blake2AsU8a, blake2AsHex } from "@polkadot/util-crypto";
-import { u8aToHex } from "@polkadot/util";
+import { blake2AsHex } from "@polkadot/util-crypto";
 import { intructionsFromXcmU8Array } from "../common/instructions-from-xcmp-msg-u8array";
 import { parceXcmpInstrustions } from "../common/parce-xcmp-instructions";
 import { TextEncoder } from "@polkadot/x-textencoder";
@@ -26,9 +25,11 @@ export async function handleUmpParaEvent(event: SubstrateEvent): Promise<void> {
     transfer.blockNumber = event.block.block.header.number.toBigInt();
     transfer.timestamp = event.block.timestamp.toISOString();
     transfer.xcmpMessageStatus = "UMP sent";
-    const { sender, currencyId, amount, dest } = event.block.events[
-      event.idx
-    ].event.data.toHuman() as any;
+
+    const umpEvent: any = event.block.events[event.idx];
+    const [sender, currencyId, amount, dest] = umpEvent.event.data
+      .toJSON()
+      .values() as any;
     const multiAssetsTrue =
       event.block.events[event.idx].event.method == "TransferredMultiAssets";
     parcexTokenTransfer(
@@ -43,11 +44,9 @@ export async function handleUmpParaEvent(event: SubstrateEvent): Promise<void> {
     transfer.fromParachainId = (await api.query.parachainInfo.parachainId())
       .toString()
       .replace(/,/g, "");
-    // overwrite if needed
-    // transfer.toParachainId = "0";
+    transfer.toParachainId = "0"; //always kusama
 
     // calculate "custom" hash for UMP due to lack ot the "real" one
-    // and I don't know how to get the byte representation of XCMP message
     transfer.xcmpMessageHash = blake2AsHex(
       new Uint8Array([
         ...new TextEncoder().encode(
@@ -190,21 +189,20 @@ async function decodeOutboundXcmp(xcmpExtrinsicWithEvents, apiAt, transfer) {
     .toString()
     .replace(/,/g, "");
   xcmpExtrinsicWithEvents.events.forEach(({ event }) => {
-    if (
-      event.section == "xTokens" &&
-      (event.method == "TransferredMultiAssets" ||
-        event.method == "Transferred")
-    ) {
-      const { sender, currencyId, amount, dest } = event.data.toHuman() as any;
+    if (event.section == "xTokens") {
+      if (event.method == "Transferred") {
+        const [sender, currencyId, amount, dest] = event.data
+          .toJSON()
+          .values() as any;
+        parcexTokenTransfer(sender, currencyId, amount, dest, false, transfer);
+      } else {
+        //"TransferredMultiAssets"
+        const [sender, currencyId, amount, dest] = event.data
+          .toJSON()
+          .values() as any;
+        parcexTokenTransfer(sender, currencyId, amount, dest, true, transfer);
+      }
 
-      parcexTokenTransfer(
-        sender,
-        currencyId,
-        amount,
-        dest,
-        event.method == "TransferredMultiAssets",
-        transfer
-      );
       // calculate SS58 addresses for given chains
       const [ansFrom, addressFrom] = getSS58AddressForChain(
         transfer.fromAddress,
@@ -279,13 +277,28 @@ function parcexTokenTransfer(
 ) {
   transfer.fromAddress = sender;
   if (multiAssetsTrue) {
-    transfer.assetId.push(
-      JSON.stringify(currencyId[0].id.concrete.interior, undefined, 0)
-    );
-    transfer.amount.push(currencyId[0].fun.fungible);
+    try {
+      transfer.amount.push(amount.fun.fungible.toString().replace(/,/g, ""));
+    } catch {
+    } finally {
+      transfer.amount.push(JSON.stringify(amount, undefined, 0));
+    }
+    try {
+      transfer.assetId.push(amount.id.concrete.interior.x2[1].generalKey);
+    } catch {}
   } else {
-    transfer.assetId.push(JSON.stringify(currencyId, undefined, 0));
-    transfer.amount.push(amount.toString().replace(/,/g, ""));
+    try {
+      transfer.amount.push(amount.toString().replace(/,/g, ""));
+    } catch {
+    } finally {
+      transfer.amount.push(JSON.stringify(amount, undefined, 0));
+    }
+    try {
+      transfer.assetId.push(currencyId.otherReserve.toString());
+    } catch {
+    } finally {
+      transfer.assetId.push(JSON.stringify(currencyId, undefined, 0));
+    }
   }
   // Extract destination address from XcmpMultilocation
   transfer.toAddress = parceInterior(dest.interior);

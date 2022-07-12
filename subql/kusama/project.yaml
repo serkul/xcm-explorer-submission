@@ -23,11 +23,6 @@ dataSources:
     mapping:
       file: ./dist/index.js
       handlers:
-        # - handler: handleUmpEvent
-        #   kind: substrate/EventHandler
-        #   filter:
-        #     module: ump
-        #     method: ExecutedUpward
         - handler: handleUmpExtrinsic
           kind: substrate/CallHandler
           filter:

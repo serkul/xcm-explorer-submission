@@ -1,12 +1,6 @@
 import { SubstrateExtrinsic, SubstrateEvent } from "@subql/types";
 import { XCMTransfer } from "../types";
-import {
-  blake2AsU8a,
-  blake2AsHex,
-  decodeAddress,
-  encodeAddress,
-  evmToAddress,
-} from "@polkadot/util-crypto";
+import { blake2AsHex } from "@polkadot/util-crypto";
 import { u8aToHex } from "@polkadot/util";
 import { intructionsFromXcmU8Array } from "../common/instructions-from-xcmp-msg-u8array";
 import { parceXcmpInstrustions } from "../common/parce-xcmp-instructions";
@@ -37,13 +31,9 @@ export async function handleDmpExtrinsic(
     fee_asset_item: feeAsset,
     weight_limit: weightLimit,
   } = extrinsicAsAny.toHuman().method.args; //ts as any
-  // transfer.warnings = JSON.stringify(extrinsicAsAny.toHuman(), undefined);
-  // transfer.toParachainId = dest.V1.interior.X1.Parachain.replace(/,/g, "");
-  // transfer.toAddress = beneficiary.V1.interior.X1.AccountKey20.key.toString();
   // Extract destination chain ID and address from XcmpMultilocation
   transfer.toAddress = parceInterior(dest.interior);
   transfer.toParachainId = chainIdFromInterior(dest.interior);
-  // transfer.assetId = assets.V0[0].ConcreteFungible.id.toString();
   transfer.amount.push(JSON.stringify(assets, undefined, 0)); //assets.V0[0].ConcreteFungible.amount.replace(/,/g, "");
   transfer.xcmpMessageStatus = "DMP sent";
 
@@ -53,7 +43,6 @@ export async function handleDmpExtrinsic(
   transfer.xcmpMessageHash = blake2AsHex(Uint8Array.from(dmpQuery[0].msg));
 
   transfer.fromParachainId = "0"; //dmp sends always from kusama
-  // Adhoc way to get fromAddress
   const withdrawEvents = extrinsic.events.filter(
     (el) => el.event.section == "balances" && el.event.method == "Withdraw"
   );
@@ -187,32 +176,3 @@ export async function handleUmpExtrinsic(
     await transfer.save();
   }
 }
-
-// function calcCustomUmpHash(instructions) {
-//   // Function computes Blake2 hash bashe on the given Multilocation and amount
-//   let amountAsU8Array;
-//   let destAsAsU8Array;
-//   instructions.slice(1).forEach((instruction) => {
-//     Object.keys(instruction).forEach((key) => {
-//       if (key == "WithdrawAsset") {
-//         amountAsU8Array = new TextEncoder().encode(
-//           instruction.WithdrawAsset[0].fun.Fungible
-//         );
-//       }
-//       if (key == "DepositAsset") {
-//         destAsAsU8Array = new TextEncoder().encode(
-//           JSON.stringify(
-//             instruction.DepositAsset.beneficiary.interior,
-//             undefined,
-//             0
-//           )
-//         );
-//       }
-//     });
-//   });
-//   const customUpmHash = blake2AsHex(
-//     new Uint8Array([...amountAsU8Array, ...destAsAsU8Array])
-//   );
-
-//   return customUpmHash;
-// }
