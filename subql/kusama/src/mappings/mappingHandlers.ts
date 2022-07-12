@@ -12,7 +12,7 @@ import { intructionsFromXcmU8Array } from "../common/instructions-from-xcmp-msg-
 import { parceXcmpInstrustions } from "../common/parce-xcmp-instructions";
 import { getSS58AddressForChain } from "../common/get-ss58-address";
 import { TextEncoder } from "@polkadot/x-textencoder";
-import { parceInterior } from "../common/parce-interior";
+import { parceInterior, chainIdFromInterior } from "../common/parce-interior";
 
 export async function handleDmpExtrinsic(
   extrinsic: SubstrateExtrinsic
@@ -42,8 +42,9 @@ export async function handleDmpExtrinsic(
   // transfer.toAddress = beneficiary.V1.interior.X1.AccountKey20.key.toString();
   // Extract destination chain ID and address from XcmpMultilocation
   transfer.toAddress = parceInterior(dest.interior);
-  transfer.assetId = assets.V0[0].ConcreteFungible.id.toString();
-  transfer.amount = assets.V0[0].ConcreteFungible.amount.replace(/,/g, "");
+  transfer.toParachainId = chainIdFromInterior(dest.interior);
+  // transfer.assetId = assets.V0[0].ConcreteFungible.id.toString();
+  transfer.amount.push(JSON.stringify(assets, undefined, 0)); //assets.V0[0].ConcreteFungible.amount.replace(/,/g, "");
   transfer.xcmpMessageStatus = "DMP sent";
 
   const dmpQuery = await api.query.dmp.downwardMessageQueues(
@@ -117,16 +118,16 @@ export async function handleUmpExtrinsic(
   const extrinsicAsAny = extrinsic.extrinsic as any;
   if (extrinsicAsAny.method.args[0].backedCandidates) {
     extrinsicAsAny.method.args[0].backedCandidates.forEach((candidate) => {
-      const paraId = candidate.candidate.descriptor.paraId
+      tempTransfer.fromParachainId = candidate.candidate.descriptor.paraId
         .toString()
         .replace(/,/g, "");
+      tempTransfer.toParachainId = "0";
       // // Check upward messages (from parachain to relay chain)
       candidate.candidate.commitments.upwardMessages.forEach((message) => {
         if (message.length > 0) {
           foundUmp = true;
 
           tempTransfer.xcmpMessageHash = blake2AsHex(Uint8Array.from(message));
-          tempTransfer.fromParachainId = paraId;
           const instructionsHuman = intructionsFromXcmU8Array(message, api);
 
           if (typeof instructionsHuman == "string") {

@@ -22,6 +22,28 @@ export function parceInterior(interior) {
   }
 }
 
+export function chainIdFromInterior(interior) {
+  let numOfJunctions: number = -1;
+  let toChainId: string;
+  [1, 2, 3, 4, 5].forEach((num) => {
+    if (interior.hasOwnProperty("X" + `${num}`)) {
+      numOfJunctions = num;
+    }
+  });
+  if (numOfJunctions == -1) {
+    return "not found";
+  } else {
+    if (numOfJunctions == 1) {
+      toChainId = "0";
+    } else {
+      toChainId =
+        interior["X" + `${numOfJunctions}`][numOfJunctions - 2].Parachain;
+    }
+    toChainId = toChainId.replace(/,/g, "");
+    return toChainId;
+  }
+}
+
 // export function parceInterior(interior) {
 //   let numOfJunctions: number = -1;
 //   let toChainId: string;
