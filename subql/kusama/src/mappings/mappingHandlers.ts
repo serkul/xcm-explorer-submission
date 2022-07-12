@@ -132,6 +132,8 @@ export async function handleUmpExtrinsic(
 
           tempTransfer.xcmpMessageHash = blake2AsHex(Uint8Array.from(message));
           tempTransfer.fromParachainId = paraId;
+          logger.info(tempTransfer.xcmpMessageHash);
+          logger.info(tempTransfer.fromParachainId);
           const instructionsHuman = intructionsFromXcmU8Array(message, api);
 
           if (typeof instructionsHuman == "string") {
@@ -141,7 +143,7 @@ export async function handleUmpExtrinsic(
               (instruction) => JSON.stringify(instruction, undefined)
             );
             parceXcmpInstrustions(instructionsHuman, tempTransfer);
-
+            logger.info(JSON.stringify(instructionsHuman, undefined, 0));
             // Calculate SS58 version of address
             const [ans, address] = getSS58AddressForChain(
               tempTransfer.toAddress,
@@ -149,13 +151,21 @@ export async function handleUmpExtrinsic(
             );
             if (ans) {
               tempTransfer.toAddressSS58 = address;
+              logger.info(`got address ${address}`);
             } else {
               tempTransfer.warnings += address;
             }
 
-            // calculate "custom" UMP hash, since parachain side
-            // doesn't knows the "real" XCMP hash
-            tempTransfer.xcmpMessageHash = calcCustomUmpHash(instructionsHuman);
+            // calculate "custom" UMP hash (simple, just amount and address),
+            // since parachain side doesn't knows the "real" XCMP hash
+            tempTransfer.xcmpMessageHash = blake2AsHex(
+              new Uint8Array([
+                ...new TextEncoder().encode(
+                  JSON.stringify(tempTransfer.amount, undefined, 0)
+                ),
+                ...new TextEncoder().encode(tempTransfer.toAddress),
+              ])
+            );
           }
         }
       });
@@ -186,31 +196,31 @@ export async function handleUmpExtrinsic(
   }
 }
 
-function calcCustomUmpHash(instructions) {
-  // Function computes Blake2 hash bashe on the given Multilocation and amount
-  let amountAsU8Array;
-  let destAsAsU8Array;
-  instructions.slice(1).forEach((instruction) => {
-    Object.keys(instruction).forEach((key) => {
-      if (key == "WithdrawAsset") {
-        amountAsU8Array = new TextEncoder().encode(
-          instruction.WithdrawAsset[0].fun.Fungible
-        );
-      }
-      if (key == "DepositAsset") {
-        destAsAsU8Array = new TextEncoder().encode(
-          JSON.stringify(
-            instruction.DepositAsset.beneficiary.interior,
-            undefined,
-            0
-          )
-        );
-      }
-    });
-  });
-  const customUpmHash = blake2AsHex(
-    new Uint8Array([...amountAsU8Array, ...destAsAsU8Array])
-  );
+// function calcCustomUmpHash(instructions) {
+//   // Function computes Blake2 hash bashe on the given Multilocation and amount
+//   let amountAsU8Array;
+//   let destAsAsU8Array;
+//   instructions.slice(1).forEach((instruction) => {
+//     Object.keys(instruction).forEach((key) => {
+//       if (key == "WithdrawAsset") {
+//         amountAsU8Array = new TextEncoder().encode(
+//           instruction.WithdrawAsset[0].fun.Fungible
+//         );
+//       }
+//       if (key == "DepositAsset") {
+//         destAsAsU8Array = new TextEncoder().encode(
+//           JSON.stringify(
+//             instruction.DepositAsset.beneficiary.interior,
+//             undefined,
+//             0
+//           )
+//         );
+//       }
+//     });
+//   });
+//   const customUpmHash = blake2AsHex(
+//     new Uint8Array([...amountAsU8Array, ...destAsAsU8Array])
+//   );
 
-  return customUpmHash;
-}
+//   return customUpmHash;
+// }

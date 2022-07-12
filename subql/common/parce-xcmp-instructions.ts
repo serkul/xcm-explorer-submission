@@ -59,10 +59,8 @@ function parceV2V3Instruction(instructions, transfer: Transfer) {
           );
           if (typeof parceRes1 == "string") {
             transfer.warnings += parceRes1;
-          } else if (parceRes1[0] != "0") {
-            transfer.toParachainId = parceRes1[0];
           } else {
-            transfer.toAddress = parceRes1[1];
+            [transfer.toParachainId, transfer.toAddress] = parceRes1;
           }
           break;
         case "DepositReserveAsset":
@@ -72,10 +70,8 @@ function parceV2V3Instruction(instructions, transfer: Transfer) {
           );
           if (typeof parceRes2 == "string") {
             transfer.warnings += parceRes2;
-          } else if (parceRes2[0] != "0") {
-            transfer.toParachainId = parceRes2[0];
           } else {
-            transfer.toAddress = parceRes2[1];
+            [transfer.toParachainId, transfer.toAddress] = parceRes2;
           }
           break;
         default:

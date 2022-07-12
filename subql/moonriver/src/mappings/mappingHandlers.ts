@@ -50,8 +50,10 @@ export async function handleUmpParaEvent(event: SubstrateEvent): Promise<void> {
     // and I don't know how to get the byte representation of XCMP message
     transfer.xcmpMessageHash = blake2AsHex(
       new Uint8Array([
-        ...new TextEncoder().encode(amount),
-        ...new TextEncoder().encode(JSON.stringify(dest.interior, undefined)),
+        ...new TextEncoder().encode(
+          JSON.stringify(transfer.amount, undefined, 0)
+        ),
+        ...new TextEncoder().encode(transfer.toAddress),
       ])
     );
 
