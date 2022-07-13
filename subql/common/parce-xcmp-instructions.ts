@@ -18,10 +18,16 @@ export function parceXcmpInstrustions(instructions, transfer: Transfer) {
         switch (key) {
           case "ReserveAssetDeposited":
             instruction.ReserveAssetDeposited.assets.forEach(({ id, fun }) => {
-              transfer.assetId.push(JSON.stringify(id.Concrete));
-              transfer.amount.push(fun.Fungible.replace(/,/g, ""));
+              try {
+                transfer.assetId.push(JSON.stringify(id.Concrete));
+              } catch {}
+              try {
+                transfer.amount.push(fun.Fungible.replace(/,/g, ""));
+              } catch {}
             });
-            effects = [...instruction.ReserveAssetDeposited.effects];
+            try {
+              effects = [...instruction.ReserveAssetDeposited.effects];
+            } catch {}
           // fall through is intentional
           default:
             if (effects.length > 0) {
@@ -40,29 +46,41 @@ function parceV2V3Instruction(instructions, transfer: Transfer) {
   const idxClearOrigin = instructions.indexOf("ClearOrigin");
   if (idxClearOrigin > -1) instructions.splice(idxClearOrigin, 1);
   instructions.forEach((instruction) => {
+    console.log(instruction);
     Object.keys(instruction).forEach((key) => {
       switch (key) {
         case "WithdrawAsset":
           instruction.WithdrawAsset.forEach(({ id, fun }) => {
-            transfer.assetId.push(JSON.stringify(id.Concrete));
-            transfer.amount.push(
-              fun.Fungible?.replace(/,/g, "") ?? JSON.stringify(fun)
-            );
+            try {
+              transfer.assetId.push(JSON.stringify(id.Concrete));
+            } catch {}
+            try {
+              transfer.amount.push(
+                fun.Fungible?.replace(/,/g, "") ?? JSON.stringify(fun)
+              );
+            } catch {}
           });
           break;
         case "BuyExecution":
           // can get weight limit and fee asset if needed
           break;
+        case "Transact":
+          //info not used
+          break;
         case "DepositAsset":
-          transfer.toAddress = parceInterior(
-            instruction.DepositAsset.beneficiary.interior
-          );
+          try {
+            transfer.toAddress = parceInterior(
+              instruction.DepositAsset.beneficiary.interior
+            );
+          } catch {}
           break;
         case "DepositReserveAsset":
-          transfer.toAddress = parceInterior(
-            instruction.DepositReserveAsset.xcm[1].DepositAsset.beneficiary
-              .interior
-          );
+          try {
+            transfer.toAddress = parceInterior(
+              instruction.DepositReserveAsset.xcm[1].DepositAsset.beneficiary
+                .interior
+            );
+          } catch {}
           break;
         default:
           transfer.warnings += ` - Unknown instruction name ${key}`;
