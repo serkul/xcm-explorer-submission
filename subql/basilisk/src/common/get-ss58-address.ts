@@ -18,7 +18,7 @@ export function getSS58AddressForChain(
   if (!isAddress(address)) {
     return [false, ` - ${address} is not address`];
   }
-  if (!chainId.hasOwnProperty(chainId)) {
+  if (!chainIdPrefix.hasOwnProperty(chainId)) {
     return [false, ` - SS58 addresses not supported on chain ID: ${chainId}`];
   }
   const addressByteLength = decodeAddress(address).byteLength;
