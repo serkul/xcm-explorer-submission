@@ -32,8 +32,13 @@ export async function handleDmpExtrinsic(
     weight_limit: weightLimit,
   } = extrinsicAsAny.toHuman().method.args; //ts as any
   // Extract destination chain ID and address from XcmpMultilocation
-  transfer.toAddress = parceInterior(dest.interior);
-  transfer.toParachainId = chainIdFromInterior(dest.interior);
+  if (dest.interior != null) {
+    transfer.toAddress = parceInterior(dest.interior);
+    transfer.toParachainId = chainIdFromInterior(dest.interior);
+  } else {
+    transfer.warnings += "interior is undefined";
+  }
+
   transfer.amount.push(JSON.stringify(assets, undefined, 0)); //assets.V0[0].ConcreteFungible.amount.replace(/,/g, "");
   transfer.xcmpMessageStatus = "DMP sent";
 

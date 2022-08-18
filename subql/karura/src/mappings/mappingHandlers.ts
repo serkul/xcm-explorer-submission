@@ -93,58 +93,70 @@ export async function handleDmpParaEvent(event: SubstrateEvent): Promise<void> {
 
   // Search for the horizontal message with the given hash (transfer.xcmpMessageHash)
   // inside the assosiated extrinsic (parachainSystem.setValidationData)
-  const dmpParaExtrinsic: any = event.extrinsic.extrinsic;
-  dmpParaExtrinsic.method.args[0].downwardMessages.forEach(
-    ({ sentAt, msg }) => {
-      const messageHash = blake2AsHex(Uint8Array.from(msg));
-      if (messageHash == transfer.xcmpMessageHash) {
-        // Get readable instructions from byte-array xcmp message
-        const instructions = intructionsFromXcmU8Array(msg, api);
-        if (typeof instructions == "string") {
-          transfer.warnings += instructions;
-        } else {
-          // Parce instructions and safe relevant info
-          parceXcmpInstrustions(instructions, transfer);
-          // Calculate SS58 version of address
-          const [ans, address] = getSS58AddressForChain(
-            transfer.toAddress,
-            transfer.toParachainId
-          );
-          if (ans) {
-            transfer.toAddressSS58 = address;
+  // extrinsic might not come in the same block (moonriver 2105158), if not skip for now
+  try {
+    const dmpParaExtrinsic: any = event.extrinsic.extrinsic;
+    dmpParaExtrinsic.method.args[0].downwardMessages.forEach(
+      ({ sentAt, msg }) => {
+        const messageHash = blake2AsHex(Uint8Array.from(msg));
+        if (messageHash == transfer.xcmpMessageHash) {
+          // Get readable instructions from byte-array xcmp message
+          const instructions = intructionsFromXcmU8Array(msg, api);
+          if (typeof instructions == "string") {
+            transfer.warnings += instructions;
           } else {
-            transfer.warnings += address;
-          }
+            // Parce instructions and safe relevant info
+            parceXcmpInstrustions(instructions, transfer);
+            // Calculate SS58 version of address
+            const [ans, address] = getSS58AddressForChain(
+              transfer.toAddress,
+              transfer.toParachainId
+            );
+            if (ans) {
+              transfer.toAddressSS58 = address;
+            } else {
+              transfer.warnings += address;
+            }
 
-          // Save all instructions as an array of JSON,
-          // in case detailed information is needed (or parces failed)
-          transfer.xcmpInstructions = instructions.map((instruction) =>
-            JSON.stringify(instruction, undefined)
-          );
+            // Save all instructions as an array of JSON,
+            // in case detailed information is needed (or parces failed)
+            transfer.xcmpInstructions = instructions.map((instruction) =>
+              JSON.stringify(instruction, undefined)
+            );
+          }
         }
       }
-    }
-  );
+    );
+  } catch {
+    transfer.warnings += "no extrinsic for dmpQueue.ExecutedDownward";
+  }
   // Find and parce assets.Issued event to confirm assets transder
   // and get the final amount deposited
-  const assetsIssueEvents: any[] = event.block.events.filter(
-    (el) => el.event.section == "assets" && el.event.method == "Issued"
-  );
-  assetsIssueEvents.forEach(({ event }) => {
-    if (event.toHuman().data.owner.toLowerCase() === transfer.toAddress) {
-      transfer.xcmpTransferStatus.push("issued");
-      transfer.amountTransferred.push(
-        event.toHuman().data.totalSupply.replace(/,/g, "")
-      );
-      transfer.assetIdTransferred.push(event.toHuman().data.assetId);
-    }
-  });
+  // const assetsIssueEvents: any[] = event.block.events.filter(
+  //   (el) => el.event.section == "assets" && el.event.method == "Issued"
+  // );
+  // assetsIssueEvents.forEach(({ event }) => {
+  //   if (event.toHuman().data.owner.toLowerCase() === transfer.toAddress) {
+  //     transfer.xcmpTransferStatus.push("issued");
+  //     transfer.amountTransferred.push(
+  //       event.toHuman().data.totalSupply.replace(/,/g, "")
+  //     );
+  //     transfer.assetIdTransferred.push(event.toHuman().data.assetId);
+  //   }
+  // });
   await transfer.save();
 }
 
 export async function handleXcmpQueueModule(
   event: SubstrateEvent
 ): Promise<void> {
+  let allBlockEvents = [];
+  try {
+    allBlockEvents = event.extrinsic.events;
+  } catch {
+    // not exrinsics relatade to event
+    return;
+  }
   const transfer = XCMTransfer.create({
     id: `${event.block.block.header.number.toNumber()}-${event.idx}`,
     warnings: "",
@@ -157,7 +169,6 @@ export async function handleXcmpQueueModule(
   transfer.timestamp = event.block.timestamp.toISOString();
 
   const signedBlock = event.block;
-  const allBlockEvents = event.extrinsic.events;
   const allBlockExtrinsics = signedBlock.block.extrinsics;
   // Map all xcmp related events to their extrinsics
   const xcmpExtrinsicsWithEvents = mapXcmpEventsToExtrinsics(
@@ -279,30 +290,25 @@ function parcexTokenTransfer(
   if (multiAssetsTrue) {
     try {
       transfer.amount.push(amount.fun.fungible.toString().replace(/,/g, ""));
-    } catch {
-    } finally {
-      transfer.amount.push(JSON.stringify(amount, undefined, 0));
-    }
+    } catch {}
     try {
       transfer.assetId.push(amount.id.concrete.interior.x2[1].generalKey);
     } catch {}
   } else {
     try {
       transfer.amount.push(amount.toString().replace(/,/g, ""));
-    } catch {
-    } finally {
-      transfer.amount.push(JSON.stringify(amount, undefined, 0));
-    }
+    } catch {}
     try {
       transfer.assetId.push(currencyId.otherReserve.toString());
-    } catch {
-    } finally {
-      transfer.assetId.push(JSON.stringify(currencyId, undefined, 0));
-    }
+    } catch {}
   }
   // Extract destination address from XcmpMultilocation
-  transfer.toAddress = parceInterior(dest.interior);
-  transfer.toParachainId = chainIdFromInterior(dest.interior);
+  if (dest.interior != null) {
+    transfer.toAddress = parceInterior(dest.interior);
+    transfer.toParachainId = chainIdFromInterior(dest.interior);
+  } else {
+    transfer.warnings += "interior is undefined";
+  }
 }
 
 function mapXcmpEventsToExtrinsics(allBlockExtrinsics, allBlockEvents) {
