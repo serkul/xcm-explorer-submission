@@ -1,0 +1,14 @@
+{
+  "name": "kusama-validator-stats",
+  "version": "1.0.0",
+  "description": "Display current active validators bonding info",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "serkul",
+  "license": "MIT",
+  "dependencies": {
+    "@polkadot/api": "^8.10.1"
+  }
+}
